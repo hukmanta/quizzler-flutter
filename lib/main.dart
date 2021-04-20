@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quizzler/quiz_brain.dart';
 
 void main() => runApp(Quizzler());
 
@@ -25,6 +26,9 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
+
+  Quiz_Brain quizBrain = Quiz_Brain();
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -37,7 +41,7 @@ class _QuizPageState extends State<QuizPage> {
             padding: EdgeInsets.all(10.0),
             child: Center(
               child: Text(
-                'This is where the question text will go.',
+                quizBrain.getQuestionText(),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 25.0,
@@ -50,9 +54,9 @@ class _QuizPageState extends State<QuizPage> {
         Expanded(
           child: Padding(
             padding: EdgeInsets.all(15.0),
-            child: FlatButton(
-              textColor: Colors.white,
-              color: Colors.green,
+            child: TextButton(
+              style: TextButton.styleFrom(
+                  primary: Colors.white, backgroundColor: Colors.green),
               child: Text(
                 'True',
                 style: TextStyle(
@@ -61,7 +65,8 @@ class _QuizPageState extends State<QuizPage> {
                 ),
               ),
               onPressed: () {
-                //The user picked true.
+                //The user picked false.
+                addScoreKeeper(true);
               },
             ),
           ),
@@ -69,8 +74,8 @@ class _QuizPageState extends State<QuizPage> {
         Expanded(
           child: Padding(
             padding: EdgeInsets.all(15.0),
-            child: FlatButton(
-              color: Colors.red,
+            child: TextButton(
+              style: TextButton.styleFrom(backgroundColor: Colors.red),
               child: Text(
                 'False',
                 style: TextStyle(
@@ -80,13 +85,27 @@ class _QuizPageState extends State<QuizPage> {
               ),
               onPressed: () {
                 //The user picked false.
+                addScoreKeeper(false);
               },
             ),
           ),
         ),
-        //TODO: Add a Row here as your score keeper
+        //Add a Row here as your score keeper
+        Row(
+          children: quizBrain.getScoreKeeper(),
+        )
       ],
     );
+  }
+
+  void addScoreKeeper(bool bool) {
+    setState(() {
+      if (bool == quizBrain.getAnswer())
+        quizBrain.addScoreKeeper(Icon(Icons.check, color: Colors.green,));
+      else
+        quizBrain.addScoreKeeper(Icon(Icons.close, color: Colors.red,));
+      quizBrain.nextQuestion(context);
+    });
   }
 }
 
